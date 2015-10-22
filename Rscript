@@ -1,5 +1,7 @@
 #Trying out git with Kristof
 
+kristof change
+
 TypeOfSite2<-TypeOfSite
 
 TypeOfSite2[TypeOfSite2=='4'] <-c('blue')
