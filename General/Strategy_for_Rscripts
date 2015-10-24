@@ -1,0 +1,15 @@
+
+#Markdown : http://rmarkdown.rstudio.com
+install.packages("rmarkdown")
+*italics*
+**bold**
+-items
+
+```
+code blocks
+```
+
+> blockquotes are offset
+
+I counted `r 1+1` red trucks on the highway
+
