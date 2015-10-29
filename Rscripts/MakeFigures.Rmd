@@ -1,3 +1,80 @@
+#remove resistance mutations
+#plot seperately for fourfold sites?
+  
+
+
+
+#plot freq distributions for 1st and 2nd pos sites 
+#I ignore the first 24 sites, because i think they may be biased bc of the primer site 
+if (TRUE){
+pdf("freqdis_WITHINallpatients_12.pdf")
+par(mfrow=c(3,4))
+brks = seq(0,1,by=1/69)
+for (k in firstandsecondpos){
+	hist(freqPatSite[,k],breaks=brks,xlim=c(0,1),col=2,border=2,ylim=c(0,5.5),freq=FALSE,main=paste("site",k))
+	text(0.6,4,paste("n=",length(which(!is.na(freqPatSite[,k])))))
+	text(0.6,3,paste("prob_seg=",round(length(which(freqPatSite[,k]>0))/length(which(freqPatSite[,k]>-.1)),2)))
+	text(0.6,5,paste("mean freq=",round(mean(freqPatSite[,k],na.rm=TRUE),3)),cex=0.8)
+}
+dev.off()
+
+pdf("freqdis_WITHINallpatients_3_ffdeg.pdf")
+par(mfrow=c(3,4))
+brks = seq(0,1,by=1/69)
+for (k in fourfoldsites){
+	hist(freqPatSite[,k],breaks=brks,xlim=c(0,1),col=1,border=1,ylim=c(0,5.5),freq=FALSE,main=paste("site",k))
+	text(0.6,4,paste("n=",length(which(!is.na(freqPatSite[,k])))))
+	text(0.6,3,paste("prob_seg=",round(length(which(freqPatSite[,k]>0))/length(which(freqPatSite[,k]>-.1)),2)))
+	text(0.6,5,paste("mean freq=",round(mean(freqPatSite[,k],na.rm=TRUE),3)),cex=0.8)
+}
+dev.off()
+
+pdf("freqdis_WITHINallpatients_3_NOTffdeg.pdf")
+par(mfrow=c(3,4))
+brks = seq(0,1,by=1/69)
+for (k in otherthirdpossites){
+	hist(freqPatSite[,k],breaks=brks,xlim=c(0,1),col=3,border=3,ylim=c(0,5.5),freq=FALSE,main=paste("site",k))
+	text(0.6,4,paste("n=",length(which(!is.na(freqPatSite[,k])))))
+	text(0.6,3,paste("prob_seg=",round(length(which(freqPatSite[,k]>0))/length(which(freqPatSite[,k]>-.1)),2)))
+	text(0.6,5,paste("mean freq=",round(mean(freqPatSite[,k],na.rm=TRUE),3)),cex=0.8)
+}
+dev.off()
+}
+
+#Get the distribution of the number of patients where a site is polymorphic, given that the patient had only the B consensus base at day 0
+#Make sure to not include resistance mutations
+if (TRUE){
+
+sprob_seg_otherthirdpossites<-c()
+for (k in otherthirdpossites){
+	if (length(grep(k,AllNtPositionsInvolvedInResistance))<1){ 
+		prob_seg_otherthirdpossites<-c(prob_seg_otherthirdpossites,length(which(freqPatSite[,k]>0))/length(which(freqPatSite[,k]>-.1)))}}
+
+prob_seg_ffdeg_thirdpossites<-c()
+for (k in fourfoldsites){
+	if (length(grep(k,AllNtPositionsInvolvedInResistance))<1){ 
+		prob_seg_ffdeg_thirdpossites<-c(prob_seg_ffdeg_thirdpossites,length(which(freqPatSite[,k]>0))/length(which(freqPatSite[,k]>-.1)))}}
+
+prob_seg_firstandsecondpos<-c()
+for (k in firstandsecondpos){
+	if (length(grep(k,AllNtPositionsInvolvedInResistance))<1){ 
+		prob_seg_firstandsecondpos<-c(prob_seg_firstandsecondpos,length(which(freqPatSite[,k]>0))/length(which(freqPatSite[,k]>-.1)))}}
+
+pdf("Distribution_Prob_Seg.pdf")
+par(mfrow=c(3,1)); brks = seq(0,1,by=1/40)
+hist(prob_seg_firstandsecondpos,col=2,freq=FALSE,breaks=brks,xlim=c(0,.4),ylim=c(0,20))
+hist(prob_seg_ffdeg_thirdpossites,col=1,freq=FALSE,breaks=brks,xlim=c(0,.4),ylim=c(0,20))
+hist(prob_seg_otherthirdpossites,col=3,freq=FALSE,breaks=brks,xlim=c(0,.4),ylim=c(0,20))
+dev.off()
+}
+
+
+
+
+
+
+
+
 # Play stuff Kristof 
 TypeOfSite2<-TypeOfSite
 
