@@ -41,6 +41,12 @@ for (k in otherthirdpossites){
 dev.off()
 }
 
+<<<<<<< HEAD
+
+
+
+=======
+>>>>>>> origin/master
 #Get the distribution of the number of patients where a site is polymorphic, given that the patient had only the B consensus base at day 0
 #Make sure to not include resistance mutations
 if (TRUE){
