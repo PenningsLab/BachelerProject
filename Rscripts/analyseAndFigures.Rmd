@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 
 #Script to analyse the frequency data and associate with features. 
 * Read the csv files 
@@ -6,8 +5,10 @@
 *Plot results (eventually new script)
 
 
+setwd('/Users/hopla/project-master/project/gitpleuni/bachelerProject/Rscripts')
+
 ```{r}
-source('baseRscript.R')
+source('../baseRscript.R')
 ```
 
 *Read the stored frequencies rather than calculating frequencies again*
@@ -22,53 +23,12 @@ read.table("../Output/freqPatTvInclDay0.csv",sep=",",header=TRUE,row.names=1)->f
 *Calculate mean freq for each site and bootstrap* 
 ```{r}
 #Get mean
-=======
-## Script to analyse the frequency data and associate with features. 
-# Read the csv files 
-# Perform necessary calcuations
-# Plot results (eventually new script)
-
-#Read the stored frequencies in stead
-if (TRUE){#read the stored data
-read.table("../Output/freqPatSiteInclDay0.csv",sep=",",header=TRUE,row.names=1)->freqPatSite
-read.table("../Output/freqPatTsInclDay0.csv",sep=",",header=TRUE,row.names=1)->freqPatTs
-read.table("../Output/freqPatTvInclDay0.csv",sep=",",header=TRUE,row.names=1)->freqPatTs
-}
-
-#which are the fourfold degenerate sites? make list of fourfoldsites
-## (all third-positions where ) kristof: geef all 3 posities waar een change niet uitmaakt (op basis van 1 en 2 pos)
-if (TRUE){
-ListFourFold<-c("gc","cg","gg","ct","cc","tc", "ac","gt")
-firstsites<-seq(1,984,by=3); secondsites<-seq(2,984,by=3); 
-firstandsecondpos<-sort(c(firstsites,secondsites)) ## added by Kristof
-fourfoldsites=c(); otherthirdpossites=c();
-for (l in firstsites){
-	if (length(grep(paste(consensusB[l:(l+1)],collapse=""),ListFourFold))>0){fourfoldsites<-c(fourfoldsites,l+2);}
-	else(otherthirdpossites<-c(otherthirdpossites,l+2))
-}}
-
-#make vector of the type of sites 
-TypeOfSite<-rep(0,984)
-TypeOfSite[fourfoldsites]<-4
-TypeOfSite[firstsites]<-2
-TypeOfSite[secondsites]<-2
-TypeOfSite[otherthirdpossites]<-3
-#make sure that resistance sites in RT have a diff type of site
-TypeOfSite[sort(c((RTImuts$pos*3)-2,(RTImuts$pos*3)-1,(RTImuts$pos*3)))+297]<-5
-
-
-
 #Calculate mean freq for each site 
->>>>>>> origin/master
 attach(freqPatSite); colMeans<-apply(freqPatSite, 2 , mean, na.rm=TRUE)
 attach(freqPatTs); colMeansTs<-apply(freqPatTs, 2 , mean, na.rm=TRUE)
 attach(freqPatTv); colMeansTv<-apply(freqPatTv, 2 , mean, na.rm=TRUE)
 
 
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/master
 #Get conf intervals by bootsstrapping
 btmeansTs<-data.frame(row.names=names(freqPatTs)[1:984]) #each row is a site, each column is a bootstrapped mean
 numbootstraps=1000
@@ -82,7 +42,6 @@ lowerConf<-btmeansSorted[,floor(0.025*numbootstraps)]
 upperConf<-btmeansSorted[,floor((1-0.025)*numbootstraps)]
 
 
-<<<<<<< HEAD
 btmeans<-data.frame(row.names=names(freqPatSite)[1:984]) #each row is a site, each column is a bootstrapped mean
 numbootstraps=1000
 for (j in 1:984){# start with the first site
@@ -144,153 +103,16 @@ transition<-function(nuc){
 ```
 
 *Make plot*
+Code got lost during an problem with git 
 ```{r}
-=======
 
-
-
-## Transition function 
-transition<-function(nuc){
-  if (nuc=="a") return("g")
-  if (nuc=="g") return("a")
-  if (nuc=="c") return("t")
-  if (nuc=="t") return("c")
-}
-
-
-## Mutation function
-mutate<-function(codon){
-nucleotides<-c('actg')
-outputmatrix<-c()
-for (x in seq(298,984,by=3))
-{
-    codon=consensusB[x:(x+2)]
-
-        for (k in 1:3) # per codon position
-        {   
-            #paste("DegenerateTransition",k,sep='')<-c()
-                mutations<-strsplit(nucleotides,"")[[1]][!strsplit(nucleotides,"")[[1]] %in% codon[k]]  # list of nucleotides that are mutations
-                same<-c()
-                #change codon nucleotides
-                        for (m in 1:3)
-                        {
-                        same<-c(same,translate(codon)==translate(gsub(codon[k],mutations[m],codon)))
-                        }
-
-            outputmatrix<-rbind(outputmatrix,same)
-        }
-}
-dimnames(outputmatrix)<-list(c(1:687),1:3)
-outputmatrix
-
-colorvector<-c()
-for (v in 1:687){
-if (c(length(which(outputmatrix[v,] %in% FALSE))>0)){colorvector<-c(colorvector,'red')}
-if (c(length(which(outputmatrix[v,] %in% FALSE))==0)){colorvector<-c(colorvector,'blue')}
-}
-
-barplot(colMeans,col=colorvector, space=0,width=1,xaxt="n", main=paste(firstcodon))
-
-
-
-outputmatrixtv<-c()
-for (x in seq(298,984,by=3))
-{
-    codon=consensusB[x:(x+2)]
-    
-    for (k in 1:3)
-    {   # per positie van het codon  de 3 nuc zetten
-        #paste("DegenerateTransition",k,sep='')<-c()
-        if (codon[k] =='a' | codon[k]=='g'){mutationstv<-c("c","t");print(mutationstv)}
-        if (codon[k] =='c' | codon[k]=='t'){mutationstv<-c("a","g")}
- 
-        sametv<-c()
-        #verander nucleotides in codon
-        for (m in 1:2)
-        {
-            sametv<-c(sametv,translate(codon)==translate(gsub(codon[k],mutationstv[m],codon)))
-        }
-        
-        outputmatrixtv<-rbind(outputmatrixtv,sametv)
-        #paste("DegenerateTransition",k,sep='') <-c(length(which(same %in% FALSE))>0)
-    }
-}
-dimnames(outputmatrixtv)<-list(c(1:687),1:2)
-outputmatrixtv
-
-
-colorvectortv<-c()
-for (v in 1:687){
-    if (c(length(which(outputmatrixtv[v,] %in% FALSE))>0)){colorvectortv<-c(colorvectortv,'red')}
-    if (c(length(which(outputmatrixtv[v,] %in% FALSE))==0)){colorvectortv<-c(colorvectortv,'blue')}
-}
-
-
-
-
-
-
-========================================================================================================================
-
-pdf("boe.pdf")
-par(mfrow=c(3,1))
-numsitesinplot=24
-for (startsite in seq(298,(984-24),by=numsitesinplot)){
-print(startsite)
-  sitestoplot<-startsite:(startsite+numsitesinplot-1) #always start with the beginning of a codon!
-  firstcodon=(startsite+2)/3; if (firstcodon>99)firstcodon=firstcodon-99
-  
-  AAseq<-c();DegenerateTransition1<-c();DegenerateTransition2<-c();DegenerateTransition3<-c()
-  
-  for (x in seq(sitestoplot[1],sitestoplot[length(sitestoplot)],by=3)){
-    codon=consensusB[x:(x+2)]
-    print(x:(x+2));print(codon)
-    AAseq<-c(AAseq,translate(codon))
-    DegenerateTransition1<-c(DegenerateTransition1,translate (codon)==translate(c(transition(codon[1]),codon[2:3])))
-    DegenerateTransition2<-c(DegenerateTransition2,translate (codon)==translate(c(codon[1],transition(codon[2]),codon[3])))
-    DegenerateTransition3<-c(DegenerateTransition3,translate (codon)==translate(c(codon[1:2],transition(codon[3]))))
-    #almost all transitions at the third position are degenerate
-  }
-  firstpossitestoplot<-sitestoplot[seq(1,length(sitestoplot),by=3)]
-  secondpossitestoplot<-sitestoplot[seq(2,length(sitestoplot),by=3)]
-  thirdpossitestoplot<-sitestoplot[seq(3,length(sitestoplot),by=3)]
-  TypeOfSite[firstpossitestoplot[which(DegenerateTransition1)]]<-4
-  TypeOfSite[secondpossitestoplot[which(DegenerateTransition2)]]<-4
-  TypeOfSite[thirdpossitestoplot[which(DegenerateTransition3)]]<-4
-  
-  barplot(colMeansTs[sitestoplot],col=TypeOfSite[sitestoplot],
-          space=0,width=1,ylim=c(0,0.05),xaxt="n", main=paste(firstcodon))
-  xaxislocs<--0.5+(1:length(sitestoplot))
-  beginningofcodon<-seq(1,length(sitestoplot),by=3)
-#show nucleotides
-  axis(1, at=xaxislocs, labels= consensusB[sitestoplot] ,tick=FALSE,line=-1)
-  #show codons
-axis(1, at=xaxislocs[beginningofcodon]+1, labels= firstcodon:(firstcodon+(numsitesinplot/3)-1),
-     tick=FALSE,line=0)
-  axis(1, at=xaxislocs[beginningofcodon]-0.5,labels=rep("",length(beginningofcodon)),col=2 ,lty=2,tck=0.8)
-  axis(1, at=xaxislocs[beginningofcodon]-0.5,labels=rep("",length(beginningofcodon)),col=2 ,lwd=2,lty=3,tck=-0.2)
-  axis(1, at=xaxislocs[beginningofcodon]+1.,labels=AAseq,col=1,line=1,tick=FALSE)
-
-#show conf intervals
-  arrows(-0.5+(1:length(sitestoplot)), lowerConf[sitestoplot] , -0.5+(1:length(sitestoplot)), upperConf[sitestoplot], 
-         angle=90, length=0.05, code=3)
-  }
-dev.off()
-
-
-
->>>>>>> origin/master
 if (TRUE){
 pdf("MeanFreqsFigForNSFPropInclDay0.pdf",width = 8, height=4)
 #jpeg("MeanFreqsFigForNSFProp.jpeg", width = 480, height = 480)
 #par(mfrow=c(3,1))
 numsitesinplot=18
 #for (startsite in seq(298,(984-24),by=numsitesinplot)){  
-<<<<<<< HEAD
-startsite = 898+3
-=======
 startsite = 898+3  
->>>>>>> origin/master
   print(startsite)
   sitestoplot<-startsite:(startsite+numsitesinplot-1) #always start with the beginning of a codon!
   firstcodon=(startsite+2)/3; if (firstcodon>99)firstcodon=firstcodon-99
@@ -335,10 +157,11 @@ startsite = 898+3
 
 dev.off()
 }
-<<<<<<< HEAD
+
+
+
+
 ```
-
-
 
 ## Method 2: original update by  Pleuni 
 Only synonymous, non-synomous and stop codons are considered
@@ -522,10 +345,11 @@ for (i in 1:984){
 
 
 ### difference between ts and tv
- plot(sort(log(a$colMeansTs +b$colMeansTv)),type='l')
-> lines(sort(log(a$colMeansTs)),col='red')
-> plot(sort((a$colMeansTs +b$colMeansTv)),type='l')
-> lines(sort((a$colMeansTs)),col='red')
+
+plot(sort(log(a$colMeansTs +b$colMeansTv)),type='l')
+lines(sort(log(a$colMeansTs)),col='red')
+plot(sort((a$colMeansTs +b$colMeansTv)),type='l')
+lines(sort((a$colMeansTs)),col='red')
 
 
 # Selecting the Protease or the Reverse transcriptase region 
@@ -628,7 +452,7 @@ freqPatTs<-round(freqPatTs,2)
 
 
 
-### I need to look at the original fasta files and look at the frequency of codons. 
+### Stop codons: I need to look at the original fasta files and look at the frequency of codons. 
 ```{r}
 list.files(path="../Data/BachelerFiles/FASTAfiles/")->listfastafiles
 for (co in codons){#for each site in the sequence
@@ -654,6 +478,9 @@ for (co in codons){#for each site in the sequence
 }
 
 ```
+
+### Make an AA variability map 
+translate(consensusB)
 
 
 ### new 
@@ -700,8 +527,5 @@ To be done
 To be done 
 
 
-
-
-=======
 
 

@@ -2,8 +2,6 @@
 #plot seperately for fourfold sites?
   
 
-
-
 #plot freq distributions for 1st and 2nd pos sites 
 #I ignore the first 24 sites, because i think they may be biased bc of the primer site 
 if (TRUE){
@@ -41,12 +39,8 @@ for (k in otherthirdpossites){
 dev.off()
 }
 
-<<<<<<< HEAD
 
 
-
-=======
->>>>>>> origin/master
 #Get the distribution of the number of patients where a site is polymorphic, given that the patient had only the B consensus base at day 0
 #Make sure to not include resistance mutations
 if (TRUE){
