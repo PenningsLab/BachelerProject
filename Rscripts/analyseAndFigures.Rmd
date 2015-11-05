@@ -627,6 +627,8 @@ i=370
 ###For protease, which are the most deleterious non-syn sites? 
 To be done 
 Interesting? why? for therapy or vaccine. 
+
+
 ###For protease, which are the most neutral non-syn sites? 
 
 
