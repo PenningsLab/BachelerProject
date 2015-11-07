@@ -69,6 +69,15 @@ upperConf<-btmeansSortedall[,floor((1-0.025)*numbootstraps)]
 
 ```
 
+* Transition function*
+```{r}
+transition<-function(nuc){
+  if (nuc=="a") return("g")
+  if (nuc=="g") return("a")
+  if (nuc=="c") return("t")
+  if (nuc=="t") return("c")
+}
+```
 
 
 
@@ -106,15 +115,6 @@ TypeOfSite[otherthirdpossites]<-3
 TypeOfSite[sort(c((RTImuts$pos*3)-2,(RTImuts$pos*3)-1,(RTImuts$pos*3)))+297]<-5
 ```
 
-* Transition function*
-```{r}
-transition<-function(nuc){
-  if (nuc=="a") return("g")
-  if (nuc=="g") return("a")
-  if (nuc=="c") return("t")
-  if (nuc=="t") return("c")
-}
-```
 
 *Make plot*
 Code got lost during an problem with git 
@@ -365,22 +365,24 @@ for (i in 1:984){
 ### Is it worth adding tv to the analysis?
 
 Determine the difference in mutation frequency between ts and tv.
-
+Not finished yet, due to git problem: i need to make it again. 
 ```{r}
 tv<-newdata_tv[order(newdata_tv[,1]),]
 ts<-newdata[order(newdata[,1]),]
 aa<-cbind(tv,ts,round(tv$colMeansTv/ts$colMeansTs,2));names(aa)[13]<-'ratio'
 
-cbind(tv,ts,round(tv$colMeansTv/ts$colMeansTs,2))[round(tv$colMeansTv/ts$colMeansTs,2)==1.94]
 #to what extent occur tv relative to ts.
 plot((tv$colMeansTv/ts$colMeansTs+0.00000001)*100)
 
 #plot the difference between all (ts+tv) and only ts
-plot(sort(log(a$colMeansTs +b$colMeansTv)),type='l')
-lines(sort(log(a$colMeansTs)),col='red')
-plot(sort((a$colMeansTs +b$colMeansTv)),type='l')
-lines(sort((a$colMeansTs)),col='red')
+#plot(sort(log(a$colMeansTs +b$colMeansTv)),type='l')
+#lines(sort(log(a$colMeansTs)),col='red')
+#plot(sort((a$colMeansTs +b$colMeansTv)),type='l')
+#lines(sort((a$colMeansTs)),col='red')
 ```
+
+
+
 
 # Selecting the Protease or the Reverse transcriptase region 
 
@@ -401,7 +403,7 @@ plot(PROdata$colMeansTs+0.001,log="y",ylim=c(0.001,0.15),cex=2, pch = "|",col=PR
 
 *PRO: Make the plots (all): INTERMEZZO*
 A plot for all does nt work because tv dominates the coloring. 
-Use frequency of all mutations, but color according to tv versus ts ratio
+Use frequency of all mutations, but color according to tv versus ts ratio by using seperate color vectors
 
 ```{r}
 #selection of PR from the tv+ts and tv dataframe
@@ -418,13 +420,15 @@ plot(PROdata_tv$colMeansTv+0.001,log="y",ylim=c(0.001,0.15),cex=2, pch = "|",col
 #forget about the gradient, plot the ts and add tv on top, (or vice versa)
 # first tv+ts, then only ts-> green on top
 # secure the numbering 
+
+# Ordered by position
 names(PROdata_tv)[6]<-'colortv'
 protstv<-merge(PROdata,PROdata_tv,by='num')
 
-
-#plot only nonsyn changes (ts +tv)
+# plot all positions 
 plot(PROdata_all$num[order(PROdata_all$num)],PROdata_all$colMeans[order(PROdata_all$num)]+0.00001,pch=16,log="y",type="b",col=PROdata_all$color[order(PROdata_all$num)])
 
+#plot only nonsyn changes (ts +tv)
 PROdata_allNonSyn<-PROdata_all[PROdata_all$TypeOfSite=="nonsyn",]
 plot(PROdata_allNonSyn$num[order(PROdata_allNonSyn$num)],PROdata_allNonSyn$colMeans[order(PROdata_allNonSyn$num)]+0.00001,pch=16,log="y",type="b",col=PROdata_allNonSyn$color[order(PROdata_allNonSyn$num)])
 
@@ -432,6 +436,18 @@ plot(PROdata_allNonSyn$num[order(PROdata_allNonSyn$num)],PROdata_allNonSyn$colMe
 #pleuni below #plot only nonsyn changes (ts +tv)
 PROdataNonSyn<-PROdata[PROdata$TypeOfSite=="nonsyn",]
 plot(PROdataNonSyn$num[order(PROdataNonSyn$num)],PROdataNonSyn$colMeansTs[order(PROdataNonSyn$num)]+0.001,col=PROdataNonSyn$color[order(PROdataNonSyn$num)],pch=16,log="y",type="b")
+
+#compare the ts plot of only nonsyn vs the ts+tv plot of only nonsym
+# it is bit biased, since for the ts+tv plot: ts with hig freq and syn, when we add tv with log freq and nonsyn, you get favored tv. 
+
+par(mfrow=c(2,1))
+plot(PROdataNonSyn$num[order(PROdataNonSyn$num)],PROdataNonSyn$colMeansTs[order(PROdataNonSyn$num)]+0.001,col=PROdataNonSyn$color[order(PROdataNonSyn$num)],pch=16,type="b",ylim=c(0,0.7))
+plot(PROdata_allNonSyn$num[order(PROdata_allNonSyn$num)],PROdata_allNonSyn$colMeans[order(PROdata_allNonSyn$num)]+0.00001,pch=16,type="b",col=PROdata_allNonSyn$color[order(PROdata_allNonSyn$num)],ylim=c(0,0.7),xaxt='n')
+axis(1,seq(1,298,by=3),label=1:100)
+
+
+
+
 
 
 
@@ -636,5 +652,8 @@ Interesting? why? for therapy or vaccine.
 To be done 
 Interesting why?  HIV replication?
 
+
+
+Rapid Evolution of Virus Sequences in Intrinsically Disordered Protein Regions
 
 
