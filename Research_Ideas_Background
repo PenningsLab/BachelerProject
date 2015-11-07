@@ -34,7 +34,7 @@ P(ts) > P(tv): ok
 P(nonsyn|tv) > P(nonsyn|ts) but how much (control for tv 2nt en ts 1nt
 
 If you have a substitution matrix: actg (actg)-1 , then you already have some biases 
-
+To what extent does a position deviate from the matrix (which is the 'average')? 
 
 #Relevant literature.
 Zanini & Neher 2013, 2015
