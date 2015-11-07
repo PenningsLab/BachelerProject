@@ -27,6 +27,15 @@ detect nonsym at high frequency
   
 
 
+Protease: minimal conserved AA across subtypes (Svicher): what about the rest?
+AA sequences: distance distribution in absolute numbers (use popart)
+
+P(ts) > P(tv): ok
+P(nonsyn|tv) > P(nonsyn|ts) but how much (control for tv 2nt en ts 1nt
+
+If you have a substitution matrix: actg (actg)-1 , then you already have some biases 
+
+
 #Relevant literature.
 Zanini & Neher 2013, 2015
 
