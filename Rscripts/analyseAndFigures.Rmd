@@ -643,14 +643,16 @@ i=370
 ###For protease, which are the most deleterious non-syn sites? 
 To be done 
 Interesting? why? for therapy or vaccine. 
+corresponding to the expected frequency based on sequence length * mutation rate? Frequency should be lower
 
 
 ###For protease, which are the most neutral non-syn sites? 
-
+corresponding to the expected frequency based on sequence length * mutation rate? Frequency should flucatuate aroudn the expected value. 
 
 #For protease, which are the most deleterious syn sites? 
-To be done 
+To be done : green colored sites with low frequ
 Interesting why?  HIV replication?
+
 
 
 
