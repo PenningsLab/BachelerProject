@@ -656,6 +656,18 @@ Interesting why?  HIV replication?
 
 
 
+
+# sequence space
 Rapid Evolution of Virus Sequences in Intrinsically Disordered Protein Regions
 
+! Make a consnesus for each patient 170*170/2 is ok 
 
+translatedfasta_pr<-translatedfasta[,1:99]
+n <- nrow(translatedfasta_pr)
+m <- matrix(nrow=n, ncol=n)
+mm<-c()
+for(i in seq_len(n - 1)){
+    for(j in seq(i, n)){
+        mm<-c(mm,sum(translatedfasta[i,]!=translatedfasta[j,]))
+        #m[j, i] <- m[i, j] <- sum(X[i,] != X[j,])
+}}
