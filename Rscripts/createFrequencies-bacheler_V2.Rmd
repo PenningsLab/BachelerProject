@@ -83,7 +83,8 @@ filename=paste("../Data/BachelerFiles/FASTAfiles/",substr(listfastafiles[i],1,6)
 	   #print(paste('h',h))
 
 	  codonposition<-((h-1)*3+1):(h*3)
-	  if(FALSE %in% names(table(consensusB[codonposition]==(apply(patfasta[day0sequences,codonposition], 1, paste))))){ # if there is one FALSE, then skip  #### problem with days0sequences
+	  if(FALSE %in% names(table(consensusB[codonposition]==t(patfasta[day0sequences,codonposition])))){
+	  #if(FALSE %in% names(table(consensusB[codonposition]==(apply(patfasta[day0sequences,codonposition], 1, paste))))){ # if there is one FALSE, then skip  #### problem with days0sequences
 	      freqPatTs_verion3[i,(((h-1)*3+1):(h*3))[1]]<-'NA'
 	      freqPatTs_verion3[i,(((h-1)*3+1):(h*3))[2]]<-'NA'
 	      freqPatTs_verion3[i,(((h-1)*3+1):(h*3))[3]]<-'NA'
@@ -100,9 +101,21 @@ filename=paste("../Data/BachelerFiles/FASTAfiles/",substr(listfastafiles[i],1,6)
 	              }
 	        }    
 
-}}
-	       
-	}   	     
+	  
+
+	  
+	}
+#remove Patients without data 
+for (pat in ListPatientsWithoutData){
+  freqPatSite<-freqPatSite[-which(row.names(freqPatSite)==pat),]
+  freqPatTs<-freqPatTs[-which(row.names(freqPatTs)==pat),]
+}
+write.csv(freqPatTs_verion2,file="../Output/freqPatTsInclDay0-version2.csv")
+write.csv(freqPatTs_verion3,file="../Output/freqPatTsInclDay0-version3.csv")
+
+}	  }
+
+#}}}   	     
 ```
 
 
@@ -113,12 +126,5 @@ filename=paste("../Data/BachelerFiles/FASTAfiles/",substr(listfastafiles[i],1,6)
 
 
 
-}
-#remove Patients without data 
-for (pat in ListPatientsWithoutData){
-  freqPatSite<-freqPatSite[-which(row.names(freqPatSite)==pat),]
-  freqPatTs<-freqPatTs[-which(row.names(freqPatTs)==pat),]
-}
-write.csv(freqPatTs_verion2,file="../Output/freqPatTsInclDay0-version2.csv")
-}
+
 
