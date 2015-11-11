@@ -631,23 +631,36 @@ plot(PROdataNonSynv2$num[order(PROdataNonSynv2$num)],PROdataNonSynv2$colMeansTsv
 #Add moving mean
 for (i in 20:280){
     range = (i-20):(i+20)
-#    points(i, mean(PROdataNonSyn$colMeansTs[PROdataNonSyn$num%in%range]), col="blue",pch = 12, cex=3)
     points(i, median(PROdataNonSynv2$colMeansTsv2[PROdataNonSynv2$num%in%range]), col="green",pch = 11, cex=3)
 }
 dev.off()
 
 #VERSION 3
-PROdataNonSyn<-PROdata[PROdata$TypeOfSite=="nonsyn",]
-plot(PROdataNonSyn$num[order(PROdataNonSyn$num)],PROdataNonSyn$colMeansTs[order(PROdataNonSyn$num)]+0.001,col=PROdataNonSyn$color[order(PROdataNonSyn$num)],pch=16,log="y",type="b")
+pdf("../Output/PR-nonsyn-version3.pdf",width = 13, height = 10)
+PROdataNonSynv3<-PROdatav3[PROdatav3$TypeOfSite=="nonsyn",]
+plot(PROdataNonSynv3$num[order(PROdataNonSynv3$num)],PROdataNonSynv3$colMeansTsv3[order(PROdataNonSynv3$num)]+0.001,col=PROdataNonSynv3$color[order(PROdataNonSynv3$num)],pch=16,log="y",type="b")
 #Add moving mean
 for (i in 20:280){
     range = (i-20):(i+20)
-#    points(i, mean(PROdataNonSyn$colMeansTs[PROdataNonSyn$num%in%range]), col="blue",pch = 12, cex=3)
-    points(i, median(PROdataNonSyn$colMeansTs[PROdataNonSyn$num%in%range]), col="green",pch = 11, cex=3)
+    points(i, median(PROdataNonSynv3$colMeansTsv3[PROdataNonSynv3$num%in%range]), col="green",pch = 11, cex=3)
 }
+dev.off()
+
+
+## compare the medians of the three versions 
+
+
+plot(1:280,rep(0.00001,280),ylim=c(0,0.015),xlim=c(1,280),pch=1,lwd=0.1)
+for (i in 20:280){
+    range = (i-20):(i+20)
+    points(i, median(PROdataNonSyn$colMeansTs[PROdataNonSyn$num%in%range]), col="green")
+  points(i, median(PROdataNonSynv2$colMeansTsv2[PROdataNonSynv2$num%in%range]), col="blue")
+  points(i, median(PROdataNonSynv3$colMeansTsv3[PROdataNonSynv3$num%in%range]), col="red")
+    }
 
 
 
+## RT 
 RTdataNonSyn<-RTdata[RTdata$TypeOfSite=="nonsyn",]
 plot(RTdataNonSyn$num[order(RTdataNonSyn$num)],RTdataNonSyn$colMeansTs[order(RTdataNonSyn$num)]+0.001,col=RTdataNonSyn$color[order(RTdataNonSyn$num)],pch=16,log="y",type="b")
 
