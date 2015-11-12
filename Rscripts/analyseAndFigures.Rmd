@@ -550,6 +550,10 @@ freqPatTs<-round(freqPatTs,2)
 ### Stop codons: I need to look at the original fasta files and look at the frequency of codons. 
 ```{r}
 list.files(path="../Data/BachelerFiles/FASTAfiles/")->listfastafiles
+
+#PSP Nov  11 2015: I removed this because we o longer need it. We now have a better way to deal with double mutants (i.e. v2 and/or v3).  
+
+if (FALSE){
 for (co in codons){#for each site in the sequence
     ListAA<-c(); ListCodon<-c()
     for (i in 1:length(listfastafiles)){ #for each fastafile 
@@ -571,7 +575,7 @@ for (co in codons){#for each site in the sequence
     print(table(ListAA))
     print(table(ListCodon))
 }
-
+}
 ```
 
  how do they get these high frequencies. Is it due to a few patients? 
