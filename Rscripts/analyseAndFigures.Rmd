@@ -5,7 +5,9 @@
 *Plot results (eventually new script)
 
 
-setwd('/Users/hopla/project-master/project/gitpleuni/bachelerProject/Rscripts')
+
+Make sure to set your working directory to the correct folder
+Kristof: setwd('/Users/hopla/project-master/project/gitpleuni/bachelerProject/Rscripts')
 
 ```{r}
 source('./baseRscript.R')
@@ -258,12 +260,15 @@ Remarks:
 Still important to map 
 * if tv: which nucleotide is used? 
 
-```{r}
-#mutate<-function(codon){}  #trying to extend the transition function (see below) to any mutation. Still unsuccessfull.
-```
+
+
+
 
 *Any change calculation*
 ```{r}
+
+#KT Nov 11 2015:  I included colMeansTsv2,colMeansTsv3 in OverviewDF and OverviewDFOrderedByFreq (previously x and newdata)
+
 nucleotides<-c('actg')
 outputmatrix<-c()
 for (x in seq(1,984,by=3)) 
