@@ -39,6 +39,24 @@ if (TRUE){
 }
 
 
+#* Transition function*
+transition<-function(nuc){
+    if (nuc=="a") return("g")
+    if (nuc=="g") return("a")
+    if (nuc=="c") return("t")
+    if (nuc=="t") return("c")
+}
+
+typeofsitefunction<-function(WTcodon, mutantcodon){
+    WTAA<-translate(WTcodon)
+    MUTAA<-translate(mutantcodon)
+    if (WTAA == MUTAA) return ("syn")
+    else if (MUTAA == "*") return ("stop")
+    else return ("nonsyn")
+}
+
+
+
 
 
 
