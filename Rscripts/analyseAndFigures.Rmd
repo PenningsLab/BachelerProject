@@ -23,7 +23,6 @@ read.table("../Output/freqPatTvInclDay0.csv",sep=",",header=TRUE,row.names=1)->f
 
 read.table("../Output/freqPatTsInclDay0-version2.csv",sep=",",header=TRUE,row.names=1)->freqPatTsv2 #replacing the ts with the new version2
 read.table("../Output/freqPatTsInclDay0-version3.csv",sep=",",header=TRUE,row.names=1)->freqPatTsv3 #replacing the ts with the new version3
-
 }
 ```
 
@@ -46,7 +45,7 @@ if (FALSE){
 btmeansTs<-data.frame(row.names=names(freqPatTs)[1:984]) #each row is a site, each column is a bootstrapped mean
 numbootstraps=1000
 for (j in 1:984){# start with the first site
-    print(j)  #kristof
+    print(j)
 for (k in 1:numbootstraps){ # first iteration
   btmeansTs[j,k]=mean(sample(freqPatTs[,j],length(freqPatTs[,j]),replace = TRUE),na.rm=TRUE)
 }}
@@ -58,7 +57,7 @@ upperConf<-btmeansSorted[,floor((1-0.025)*numbootstraps)]
 btmeansTv<-data.frame(row.names=names(freqPatTv)[1:984]) #each row is a site, each column is a bootstrapped mean
 numbootstraps=1000
 for (j in 1:984){# start with the first site
-    print(j)  #kristof
+    print(j)
 for (k in 1:numbootstraps){ # first iteration
   btmeansTv[j,k]=mean(sample(freqPatTv[,j],length(freqPatTv[,j]),replace = TRUE),na.rm=TRUE)
 }}
@@ -69,9 +68,9 @@ upperConf<-btmeansSortedtv[,floor((1-0.025)*numbootstraps)]
 ## ts+tv
 btmeans<-data.frame(row.names=names(freqPatSite)[1:984]) #each row is a site, each column is a bootstrapped mean
 numbootstraps=1000
-for (j in 1:984){# start with the first site
-    print(j)  #kristof
-for (k in 1:numbootstraps){ # first iteration
+for (j in 1:984){
+    print(j)
+for (k in 1:numbootstraps){ 
   btmeans[j,k]=mean(sample(freqPatSite[,j],length(freqPatSite[,j]),replace = TRUE),na.rm=TRUE)
 }}
 btmeansSortedall<-t(apply(btmeans,1,sort))
@@ -81,18 +80,8 @@ upperConf<-btmeansSortedall[,floor((1-0.025)*numbootstraps)]
 
 ```
 
-* Transition function*
-```{r}
-#PSP Nov 11 2015 I moved the transition function to the baseRscript.R file
-#transition<-function(nuc){
- # if (nuc=="a") return("g")
- # if (nuc=="g") return("a")
- # if (nuc=="c") return("t")
- # if (nuc=="t") return("c")
-#}
-```
 
-## Method 1: original by  Pleuni 
+## Method 1: original by  Pleuni (Can be skipped for now)
 Considering transitions and fourfold degenerate sites 
 PSP Nov 11 2015: We don't use this method to determine which sites are 4-fold degenerate anymore so I put it in an if (FALSE) statement
 
@@ -112,7 +101,6 @@ for (l in firstsites){
 }
 
 #make vector of the type of sites*
-
 TypeOfSite<-rep(0,984)
 TypeOfSite[fourfoldsites]<-4
 TypeOfSite[firstsites]<-2
@@ -188,18 +176,6 @@ Only synonymous, non-synomous and stop codons are considered
 - for each mutation, determine whether it is synonymous, non-synonymous or creates a stop
 - add information on resistance  positions
 
-PSP Nov 11 2015, I moved the typeofsitefunction to baseRscript
-
-```{r}
-#typeofsitefunction<-function(WTcodon, mutantcodon){
-#    WTAA<-translate(WTcodon)
-#    MUTAA<-translate(mutantcodon)
-#    if (WTAA == MUTAA) return ("syn")
-#    else if (MUTAA == "*") return ("stop")
-#    else return ("nonsyn")
-#}
-```    
-
 ```{r}
 TypeOfSite<-c()
 for (codon in 1:(984/3)){#for each codon in the sequence
@@ -212,12 +188,11 @@ for (codon in 1:(984/3)){#for each codon in the sequence
     TypeOfSite<-c(TypeOfSite,typeofsitefunction(WTcodon,mutant2codon))
     TypeOfSite<-c(TypeOfSite,typeofsitefunction(WTcodon,mutant3codon))
 }
-```    
-
-```{r}
 #make sure that resistance sites in RT have a diff type of site
 TypeOfSite[sort(c((RTImuts$pos*3)-2,(RTImuts$pos*3)-1,(RTImuts$pos*3)))+297]<-"res"
-```
+  
+```    
+
 
 
 ```{r}
@@ -234,22 +209,9 @@ for (i in 1:984){
     if (OverviewDFOrderedByFreq$TypeOfSite[i]=="res") OverviewDFOrderedByFreq$color[i] = "purple"
 }
 
-#PSP Nov 11 2015 I included colMeansTsv2,colMeansTsv3 in OverviewDF and OverviewDFOrderedByFreq (previously x and newdata)
-#version2 and version3: remove when not useful
-#xv23<-data.frame(num=1:984,colMeansTs,colMeansTsv2,colMeansTsv3,TypeOfSite,lowerConf,upperConf)
-#xv23$color<-""
-#for (i in 1:984){
-#    if (xv23$TypeOfSite[i]=="syn") xv23$color[i] = "green"
-#    if (xv23$TypeOfSite[i]=="nonsyn") xv23$color[i] = "red"
-#    if (xv23$TypeOfSite[i]=="stop") xv23$color[i] = "black"
-#    if (xv23$TypeOfSite[i]=="res") xv23$color[i] = "purple"
-#newdatav2 <- xv23[order(colMeansTsv2),] 
-#newdatav3 <- xv23[order(colMeansTsv3),] 
-#    }
-
 ```
 
-## Method 3: original by Kristof
+## Method 3: original by Kristof (can be skipped for now)
 --> Trying to adapt the transition function of Pleuni, to take into account any change or transversion. 
 
 Remarks:
@@ -266,9 +228,7 @@ Still important to map
 
 *Any change calculation*
 ```{r}
-
-#KT Nov 11 2015:  I included colMeansTsv2,colMeansTsv3 in OverviewDF and OverviewDFOrderedByFreq (previously x and newdata)
-
+if(FALSE){
 nucleotides<-c('actg')
 outputmatrix<-c()
 for (x in seq(1,984,by=3)) 
@@ -287,11 +247,13 @@ for (x in seq(1,984,by=3))
             }
 }
 dimnames(outputmatrix)<-list(c(1:984),c('codonpos1','codonpos2','codonpos3'))  #687
+}
 ```
 
 
 If TRUE is always observed a position, color blue (i.e. always the same amino acid)
 ```{r}
+if(FALSE){
 TypeOfSite_all<-c()
 for (v in 1:984){
 if (c(length(which(outputmatrix[v,] %in% "stop"))>0)){TypeOfSite_all<-c(TypeOfSite_all,'stop')}
@@ -300,13 +262,13 @@ else{
   if (c(length(which(outputmatrix[v,] %in% FALSE))==0)){TypeOfSite_all<-c(TypeOfSite_all,'syn')}
     }
 }
-
 TypeOfSite_all[sort(c((RTImuts$pos*3)-2,(RTImuts$pos*3)-1,(RTImuts$pos*3)))+297]<-"res"
+}
 ```
 
 
 ```{r}  
-# x_all: considering both tv and ts  
+if(FALSE){
 #PSP Nov 11 2015 removed confidence intervals here
 OverviewDF_all<-data.frame(num=1:984,colMeans,TypeOfSite_all)
 OverviewDFOrderedByFreq_all <- OverviewDF_all[order(colMeans),] 
@@ -317,11 +279,13 @@ for (i in 1:984){
     if (OverviewDFOrderedByFreq_all$TypeOfSite_all[i]=="stop") OverviewDFOrderedByFreq_all$color[i] = "black"
     if (OverviewDFOrderedByFreq_all$TypeOfSite_all[i]=="res") OverviewDFOrderedByFreq_all$color[i] = "purple"
 }
+}
 ```
 
 
 *Only transversions*
 ```{r}
+if(FALSE){
 outputmatrixtv<-c()
 for (x in seq(1,984,by=3))
 {
@@ -334,7 +298,7 @@ for (x in seq(1,984,by=3))
         if (codon[k] =='c' | codon[k]=='t'){mutationstv<-c("a","g")}
  
         sametv<-c()
-        #verander nucleotides in codon
+        #change nucleotides in codon
         for (m in 1:2)
         {
            if(translate(gsub(codon[k],mutationstv[m],codon))=="*"){sametv<-c(sametv,"stop")}
@@ -342,15 +306,16 @@ for (x in seq(1,984,by=3))
         }
         
         outputmatrixtv<-rbind(outputmatrixtv,sametv)
-        #paste("DegenerateTransition",k,sep='') <-c(length(which(same %in% FALSE))>0)
     }
 }
 dimnames(outputmatrixtv)<-list(c(1:984),1:2)
+}
 ```
 
 
 If TRUE is always observed a position, color blue (i.e. always the same amino acid)
 ```{r}
+if(FALSE){
 TypeOfSite_tv<-c()
 for (v in 1:984){
 if (c(length(which(outputmatrixtv[v,] %in% "stop"))>0)){TypeOfSite_tv<-c(TypeOfSite_tv,'stop')}
@@ -360,35 +325,44 @@ else{
     }
 }
 TypeOfSite_tv[sort(c((RTImuts$pos*3)-2,(RTImuts$pos*3)-1,(RTImuts$pos*3)))+297]<-"res"
-
+}
 ```
+
+
+
+
+
 
 
 ```{r}  
 # x_tv: considering both tv and ts  
 #PSP Nov 11 2015 removed ,lowerConf,upperConf here
-x_tv<-data.frame(num=1:984,colMeansTv,TypeOfSite_tv)
-newdata_tv <- x_tv[order(colMeansTv),] 
-newdata_tv$color<-""
+if(FALSE){
+OverviewDF_tv<-data.frame(num=1:984,colMeansTv,TypeOfSite_tv)
+OverviewDFOrderedByFreq_tv <- OverviewDF_tv[order(colMeansTv),] 
+OverviewDFOrderedByFreq_tv$colortv<-""
 for (i in 1:984){
-    if (newdata_tv$TypeOfSite_tv[i]=="syn") newdata_tv$color[i] = "green"
-    if (newdata_tv$TypeOfSite_tv[i]=="nonsyn") newdata_tv$color[i] = "red"
-    if (newdata_tv$TypeOfSite_tv[i]=="stop") newdata_tv$color[i] = "black"
-    if (newdata_tv$TypeOfSite_tv[i]=="res") newdata_tv$color[i] = "purple"
+    if (OverviewDFOrderedByFreq_tv$TypeOfSite_tv[i]=="syn") OverviewDFOrderedByFreq_tv$colortv[i] = "green"
+    if (OverviewDFOrderedByFreq_tv$TypeOfSite_tv[i]=="nonsyn") OverviewDFOrderedByFreq_tv$colortv[i] = "red"
+    if (OverviewDFOrderedByFreq_tv$TypeOfSite_tv[i]=="stop") OverviewDFOrderedByFreq_tv$colortv[i] = "black"
+    if (OverviewDFOrderedByFreq_tv$TypeOfSite_tv[i]=="res") OverviewDFOrderedByFreq_tv$colortv[i] = "purple"
+}
 }
 ```
 
 
-### Is it worth adding tv to the analysis?
+### Is it worth adding tv to the analysis?   (skip this)
 
-Determine the difference in mutation frequency between ts and tv.
-Not finished yet, due to git problem: i need to make it again. 
+Determine the difference (%) in mutation frequency between ts and tv.
+
+! Since tv and ts+tv frequency calculations are currently based on the version 1 (the old method), these lines of code are currently not correct, and also require some cleaning.  
+
 ```{r}
-#PSP Nov 11 2015: I am not sure the next lines are correct. 
+if(FALSE){
 
-tv<-newdata_tv[order(newdata_tv[,1]),]
-ts<-OverviewDFOrderedByFreq[order(OverviewDFOrderedByFreq[,1]),]
-aa<-cbind(tv,ts,round(tv$colMeansTv/ts$colMeansTs,2));
+tv<-OverviewDFOrderedByFreq_tv[order(OverviewDFOrderedByFreq_tv[,1]),]  #order on num
+ts<-OverviewDFOrderedByFreq[order(OverviewDFOrderedByFreq[,1]),] #order on num
+aa<-cbind(tv,ts,round(tv$colMeansTv/ts$colMeansTs,2));  #add the ratio of tv/ts
 
 #PSP the number of columns for aa had changed because I took out the conf intervals. had to change the code here so that the last column was renamed.
 names(aa)[length(names(aa))]<-'ratio'
@@ -401,6 +375,7 @@ plot((tv$colMeansTv/ts$colMeansTs+0.00000001)*100)
 #lines(sort(log(a$colMeansTs)),col='red')
 #plot(sort((a$colMeansTs +b$colMeansTv)),type='l')
 #lines(sort((a$colMeansTs)),col='red')
+}
 ```
 
 
@@ -429,14 +404,15 @@ dev.off()
 pdf("../Output/Protease-version2.pdf",width = 13, height = 10)
 #PROdatav2<-newdatav2[newdatav2$num<298,]
 #PROdatav2<-PROdatav2[PROdatav2$TypeOfSite!="res",]
-#PSP Nov 11 2015 we can now use PROdata instead of PROdatav2 and PROdatav3
-plot(PROdata$colMeansTsv2+0.001,log="y",ylim=c(0.001,0.15),cex=2, pch = "|",col=PROdata$color)
+# PSP Nov 11 2015 we can now use PROdata instead of PROdatav2 and PROdatav3
+# KT  Nov 12 2015: yes, but PROdata is ordered by colMeansTs, and therefore we should reorder for the colMeansTsv2 plot.
+plot(PROdata$colMeansTsv2[order(PROdata$colMeansTsv2)]+0.001,log="y",ylim=c(0.001,0.15),cex=2, pch = "|",col=PROdata$color[order(PROdata$colMeansTsv2)])
 dev.off()
 
 pdf("../Output/Protease-version3.pdf",width = 13, height = 10)
 #PROdatav3<-newdatav3[newdatav3$num<298,]
 #PROdatav3<-PROdatav3[PROdatav3$TypeOfSite!="res",]
-plot(PROdata$colMeansTsv3+0.001,log="y",ylim=c(0.001,0.15),cex=2, pch = "|",col=PROdata$color)
+plot(PROdata$colMeansTsv3[order(PROdata$colMeansTsv3)]+0.001,log="y",ylim=c(0.001,0.15),cex=2, pch = "|",col=PROdata$color[order(PROdata$colMeansTsv3)])
 dev.off()
 ```
 
@@ -450,27 +426,32 @@ option2: Use frequency of ts (order), plot ts and in addition plot tv+ts. This w
 PROdata_all<-OverviewDFOrderedByFreq_all[OverviewDFOrderedByFreq_all$num<298,]
 PROdata_all<-PROdata_all[PROdata_all$TypeOfSite_all!="res",]
 
-PROdata_tv<-newdata_tv[newdata_tv$num<298,]
+#KT: should be updated: remove newdata_tv by the OverviewDF series
+PROdata_tv<-OverviewDFOrderedByFreq_tv[OverviewDFOrderedByFreq_tv$num<298,]
 PROdata_tv<-PROdata_tv[PROdata_tv$TypeOfSite_tv!="res",]
-plot(PROdata_tv$colMeansTv+0.001,log="y",ylim=c(0.001,0.15),cex=2, pch = "|",col=PROdata_tv$color)
+plot(PROdata_tv$colMeansTv+0.001,log="y",ylim=c(0.001,0.15),cex=2, pch = "|",col=PROdata_tv$colortv)
 
 # option 1 with the gradient: forget due to too much work to code it. 
 # we will go for option 2: plot the ts and add tv on top, (or vice versa)
 # first tv+ts, then only ts-> green on top   ---! beware of the numbering. tv must be ordered similar to ts, and not according to tv frequencies.  
 
-# Ordered by position
-#PSP Nov 11 2015 : please don't hard code the number of the column! 
-names(PROdata_tv)[which(names(PROdata_tv) == "color")]<-'colortv'
+# ORDERED by genome position
 protstv<-merge(PROdata,PROdata_tv,by='num')
 # Plot all positions 
+# what can we learn from this figure. Heavily biased towards 'tv dominance' in coloring.
 plot(PROdata_all$num[order(PROdata_all$num)],PROdata_all$colMeans[order(PROdata_all$num)]+0.00001,pch=16,log="y",type="b",col=PROdata_all$color[order(PROdata_all$num)])
 
-# Ordered according to colMeanTs
+#plot the difference in coloring and frequency of ts alone and ts+tv 
+plot(log(protstv$colMeansTv+0.001+protstv$colMeansTs),cex=2, pch = "|",col=protstv$colortv)
+points(log(protstv$colMeansTs+0.001),cex=2, pch = "*",col=protstv$color)
+
+
+# ORDERED according to colMeanTs
 protstv2<-protstv[order(protstv$colMeansTs),]
 # first ts then ts+tv,or vice versa: important for the coloring. 
 plot(log(protstv2$colMeansTv+0.001+protstv2$colMeansTs),cex=2, pch = "|",col=protstv2$colortv)
 points(log(protstv2$colMeansTs+0.001),cex=2, pch = "|",col=protstv2$color)
-plot((0.001+protstv2$colMeansTs),ylim=c(0.001,0.15),cex=2, pch = "|",col=protstv2$color)
+plot((0.001+protstv2$colMeansTs),ylim=c(0.001,0.15),cex=2, pch = "|",col=protstv2$color) #less clear variant
 points((protstv2$colMeansTv+0.001+protstv2$colMeansTs),cex=2, pch = "|",col=protstv2$colortv)
 
 ```
@@ -551,7 +532,6 @@ freqPatTs<-round(freqPatTs,2)
 ```
 
 
-
 ### Stop codons: I need to look at the original fasta files and look at the frequency of codons. 
 ```{r}
 list.files(path="../Data/BachelerFiles/FASTAfiles/")->listfastafiles
@@ -607,6 +587,22 @@ for(m in 1:length(translatedB)){
 prevmut<-100-(length(which(translatedfasta[,m]==translatedB[m]))/nrow(translatedfasta)*100)
 mutations<-c(mutations,prevmut)
 }
+
+# Plot for protease including resistance positions
+plot(mutations[1:99],type='o',ylab='Mutation frequency (%)',xlab='AA position')
+# Plot for RT including resistance positions
+plot(mutations[ 100:328],type='o',ylab='Mutation frequency (%)',xlab='AA position',xaxt='n')
+axis(1,(100:328)-99,label=(100:328)-99)
+
+
+# Plot for RT excluding resistance positions
+mutationposition<-cbind(1:229,mutations[100:328])
+plot(mutationposition[-c(sort(RTImuts$pos)),1],mutationposition[-c(sort(RTImuts$pos)),2],type='o',ylab='Mutation frequency (%)',xlab='AA position',xaxt='n')
+
+
+sort(RTImuts$pos)+99
+
+
 ```
 
 
@@ -647,19 +643,32 @@ i=370
 ```{r}
 #VERSION2 
 pdf("../Output/PR-nonsyn-version2.pdf",width = 13, height = 10)
-PROdataNonSynv2<-PROdata[PROdata$TypeOfSite=="nonsyn",]
-plot(PROdataNonSynv2$num[order(PROdataNonSynv2$num)],PROdataNonSynv2$colMeansTsv2[order(PROdataNonSynv2$num)]+0.001,col=PROdataNonSynv2$color[order(PROdataNonSynv2$num)],pch=16,log="y",type="b")
-#Add moving mean
+# KT 12 nov: this is not needed anymore, since al ts versions are in the same data frame PROdata
+# PROdataNonSynv2<-PROdata[PROdata$TypeOfSite=="nonsyn",] 
+plot(PROdataNonSyn$num[order(PROdataNonSyn$num)],PROdataNonSyn$colMeansTsv2[order(PROdataNonSyn$num)]+0.001,col=PROdataNonSyn$color[order(PROdataNonSyn$num)],pch=16,log="y",type="b")
+# adding syn on top, to see the difference. 
+PROdataSyn<-PROdata[PROdata$TypeOfSite=="syn",]
+points(PROdataSyn$num[order(PROdataSyn$num)],PROdataSyn$colMeansTsv2[order(PROdataSyn$num)]+0.001,col=PROdataSyn$color[order(PROdataSyn$num)],pch=16,log="y",type="b")
+
+#Add moving mean for nonsyn
 for (i in 20:280){
     range = (i-20):(i+20)
-    points(i, median(PROdataNonSynv2$colMeansTsv2[PROdataNonSynv2$num%in%range]), col="green",pch = 11, cex=3)
+    points(i, median(PROdataNonSynv2$colMeansTsv2[PROdataNonSynv2$num%in%range]), col="orange",pch = 11, cex=3)
 }
+#Add moving mean for syn
+for (i in 20:280){
+    range = (i-20):(i+20)
+    points(i, median(PROdataSyn$colMeansTsv2[PROdataSyn$num%in%range]), col="cyan",pch = 11, cex=3)
+}
+
 dev.off()
 
 #VERSION 3
 pdf("../Output/PR-nonsyn-version3.pdf",width = 13, height = 10)
-PROdataNonSynv3<-PROdata[PROdata$TypeOfSite=="nonsyn",]
-plot(PROdataNonSynv3$num[order(PROdataNonSynv3$num)],PROdataNonSynv3$colMeansTsv3[order(PROdataNonSynv3$num)]+0.001,col=PROdataNonSynv3$color[order(PROdataNonSynv3$num)],pch=16,log="y",type="b")
+#not needed anymore because of the new dataframe with all 3 versions of ts
+#PROdataNonSynv3<-PROdata[PROdata$TypeOfSite=="nonsyn",]
+plot(PROdataNonSyn$num[order(PROdataNonSyn$num)],PROdataNonSyn$colMeansTsv3[order(PROdataNonSyn$num)]+0.001,col=PROdataNonSyn$color[order(PROdataNonSyn$num)],pch=16,log="y",type="b")
+
 #Add moving mean
 for (i in 20:280){
     range = (i-20):(i+20)
@@ -669,17 +678,22 @@ dev.off()
 
 
 ## compare the medians of the three versions 
-
-
+# Not a good method since position 63 in PR (the very high peak) affects neighboring median as well, so you have a false impression of the highly variable psositions
 plot(1:280,rep(0.00001,280),ylim=c(0,0.015),xlim=c(1,280),pch=1,lwd=0.1)
 for (i in 20:280){
     range = (i-20):(i+20)
     points(i, median(PROdataNonSyn$colMeansTs[PROdataNonSyn$num%in%range]), col="green")
-  points(i, median(PROdataNonSynv2$colMeansTsv2[PROdataNonSynv2$num%in%range]), col="blue")
-  points(i, median(PROdataNonSynv3$colMeansTsv3[PROdataNonSynv3$num%in%range]), col="red")
+  points(i, median(PROdataNonSyn$colMeansTsv2[PROdataNonSyn$num%in%range]), col="blue")
+  points(i, median(PROdataNonSyn$colMeansTsv3[PROdataNonSyn$num%in%range]), col="red")
     }
+# plot position-specific differences
+plot(1:300,rep(0.00001,300),ylim=c(0,0.3),xlim=c(1,300),pch=1,lwd=0.1)
+lines(PROdataNonSyn$num[order(PROdataNonSyn$num)],PROdataNonSyn$colMeansTs[order(PROdataNonSyn$num)], col="green")
+lines(PROdataNonSyn$num[order(PROdataNonSyn$num)],PROdataNonSyn$colMeansTsv2[order(PROdataNonSyn$num)], col="blue")
+lines(PROdataNonSyn$num[order(PROdataNonSyn$num)],PROdataNonSyn$colMeansTsv3[order(PROdataNonSyn$num)], col="red")
+  
 
-
+    
 
 ## RT 
 RTdataNonSyn<-RTdata[RTdata$TypeOfSite=="nonsyn",]
@@ -705,6 +719,8 @@ i=370
 
 ### Non-syn figures of transversions or of all (transversions + transitions) for version 1
 
+KT 12 nov 2015: Still to be updated and checked conforming recent adaptations to the script
+But actually useless due to tv bias. 
 ```{r}
 # Plot only nonsyn changes (ts+tv), following the methodology of below ts nonsyn. 
 PROdata_allNonSyn<-PROdata_all[PROdata_all$TypeOfSite=="nonsyn",]
