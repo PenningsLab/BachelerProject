@@ -1,0 +1,88 @@
+---
+title: "SynSitesRandomization"
+author: "Pleuni"
+date: "November 12, 2015"
+output: html_document
+---
+
+
+```{r}
+source('./baseRscript.R')
+```
+
+*Read the stored frequencies rather than calculating frequencies again*
+```{r}
+if (TRUE){#read the stored data
+read.table("../Output/freqPatTsInclDay0-version2.csv",sep=",",header=TRUE,row.names=1)->freqPatTsv2 #replacing the ts with the new version2
+}
+
+TypeOfSite<-c()
+for (codon in 1:(984/3)){#for each codon in the sequence
+    positions <- c(codon*3-2,codon*3-1, codon*3)
+    WTcodon <- consensusB[positions]
+    mutant1codon <- c(transition(WTcodon[1]), WTcodon[2:3])
+    mutant2codon <- c(WTcodon[1],transition(WTcodon[2]), WTcodon[3])
+    mutant3codon <- c(WTcodon[1:2], transition(WTcodon[3]))
+    TypeOfSite<-c(TypeOfSite,typeofsitefunction(WTcodon,mutant1codon))
+    TypeOfSite<-c(TypeOfSite,typeofsitefunction(WTcodon,mutant2codon))
+    TypeOfSite<-c(TypeOfSite,typeofsitefunction(WTcodon,mutant3codon))
+}
+
+#make sure that resistance sites in RT have a diff type of site
+TypeOfSite[sort(c((RTImuts$pos*3)-2,(RTImuts$pos*3)-1,(RTImuts$pos*3)))+297]<-"res"
+
+colMeansTsv2<-apply(freqPatTsv2, 2 , mean, na.rm=TRUE)
+
+OverviewDF<-data.frame(num=1:984,colMeansTsv2, TypeOfSite)
+OverviewDFSyn<-OverviewDF[OverviewDF$TypeOfSite=="syn",]
+
+
+hist(OverviewDFSyn$colMeansTsv2)
+var(OverviewDFSyn$colMeansTsv2)
+```
+
+
+OK, now I am going to do the randomization and recalculate the variance 1000 times. Only for the syn sites
+```{r}
+freqPatTsv2Syn<-freqPatTsv2[,OverviewDF$TypeOfSite=="syn"]
+consensusBSyn<-consensusB[OverviewDF$TypeOfSite=="syn"]
+Asites<-which(consensusBSyn=="a")
+Csites<-which(consensusBSyn=="c")
+Gsites<-which(consensusBSyn=="g")
+Tsites<-which(consensusBSyn=="t")
+
+ListOfVars<-c()
+#switch A sites
+
+for (j in 1:1000){
+freqPatTsRandomSyn<-freqPatTsv2Syn
+
+for (i in 1:length(freqPatTsv2[,1])){
+freqPatTsRandomSyn[i,sample(Asites)]<-freqPatTsv2Syn[i,Asites]
+freqPatTsRandomSyn[i,sample(Csites)]<-freqPatTsv2Syn[i,Csites]
+freqPatTsRandomSyn[i,sample(Gsites)]<-freqPatTsv2Syn[i,Gsites]
+freqPatTsRandomSyn[i,sample(Tsites)]<-freqPatTsv2Syn[i,Tsites]
+}
+
+ListOfVars<-c(ListOfVars, var(apply(freqPatTsRandomSyn, 2 , mean, na.rm=TRUE)))
+}
+```
+
+Show the distribution of variances form the randomized data and compare with the value of the ofiginal dataset. It looks very different!
+```{r}
+hist(ListOfVars,breaks=20,xlim=c(8*10^-6,2*10^-5), main="Histogram of variances vs observed variance")
+abline(v=var(apply(freqPatTsv2Syn, 2 , mean, na.rm=TRUE)),col=2,lwd=2)
+
+```
+Show the distribution of the means for one randome dataset and the original data. One can see that the randomized data have much fewer 0s and fewer high values. 
+```{r}
+colMeansRandomSyn<-apply(freqPatTsRandomSyn, 2 , mean, na.rm=TRUE)
+par(mfrow=c(1,1))
+hist(apply(freqPatTsv2Syn, 2 , mean, na.rm=TRUE),breaks=seq(0,0.2,by=0.001),xlim=c(0,0.04),
+     #ylim=c(0,40),
+     col=rgb(1,0,0,0.5),main="Histogram of randomized (blue) vs observed (red) mean frequencies")
+hist(colMeansRandomSyn,breaks=seq(0,0.1,by=0.001),xlim=c(0,0.04),ylim=c(0,40),add=T,col=rgb(0,0,1,0.5))
+```
+
+
+

@@ -545,8 +545,6 @@ for (codon in codons){
 freqPatTs<-round(freqPatTs,2)
 ```
 
-
-
 ### Stop codons: I need to look at the original fasta files and look at the frequency of codons. 
 ```{r}
 list.files(path="../Data/BachelerFiles/FASTAfiles/")->listfastafiles
