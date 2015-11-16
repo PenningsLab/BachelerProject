@@ -1,26 +1,32 @@
+
 baseRscript.R: 
+createFrequencies-bacheler-threshold33.R
+analyseAndFigures-threshold33.Rmd
 
-createFrequencies-bacheler.R
-createFrequencies-bacheler_V2.R: contains the version 2 and 3 
-
-analyseAndFigures.Rmd 
 
 createCodonMutationDistribution.Rmd:
 
 SynSitesRandomization.Rmd
 
-RFrequenciesWithinPlotRanked.Rmd: Script made by Pleuni, with code for …    [moved to backupfiles]
 
 MakeFigures.Rmd [remove?]  
 
 
 #backup KT 16 nov 2015
-
+———————————
 mkdir backupfiles 
+
+mv createFrequencies-bacheler.R backupfiles/
+-> the initial file to calculate frequencies of transitions (and as well of transversions and transitions+transversion)
+
 mv RFrequenciesWithinPlotRanked.Rmd backupfiles/
+-> script written by Pleuni with efficient methodology to calculate transitions, to plot syn/nonsyn according to ranked frequency, deal with stop codons and plot the sliding window mean within the protein.
 
+mv createFrequencies-bacheler_V2.R backupfiles/
+-> only for ts
+-> : contains the updated methodologies to calculate mutations frequencies: version 2 v2 removes patients of, given a specific, which days0sequences do not match the consensus nucleotide, and version v3, given a specific codon, do not match the consensus nucleotide. 
 
-ccreateFrequencies-bacheler.R
-createFrequencies-bacheler_V2.R: contains the version 2 and 3 
 
 analyseAndFigures.Rmd 
+-> method 1 by pleuni (old code to assign syn/nonsyn), method 2 by pleuni (new code to assign syn/nonsym), method 3 (ts+tv, tv and assign syn/nonsyn) 
+—> analysing output from the ts v1, ts v2 and ts v3 frequencies and integrating the code from RFrequenciesWithinPlotRanked.Rmd 
