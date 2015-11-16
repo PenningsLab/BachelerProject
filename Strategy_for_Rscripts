@@ -1,0 +1,26 @@
+baseRscript.R: 
+
+createFrequencies-bacheler.R
+createFrequencies-bacheler_V2.R: contains the version 2 and 3 
+
+analyseAndFigures.Rmd 
+
+createCodonMutationDistribution.Rmd:
+
+SynSitesRandomization.Rmd
+
+RFrequenciesWithinPlotRanked.Rmd: Script made by Pleuni, with code for …    [moved to backupfiles]
+
+MakeFigures.Rmd [remove?]  
+
+
+#backup KT 16 nov 2015
+
+mkdir backupfiles 
+mv RFrequenciesWithinPlotRanked.Rmd backupfiles/
+
+
+ccreateFrequencies-bacheler.R
+createFrequencies-bacheler_V2.R: contains the version 2 and 3 
+
+analyseAndFigures.Rmd 
