@@ -1,0 +1,107 @@
+---
+title: "SRA_files_alignment"
+author: "Pleuni"
+date: "October 29, 2015"
+output: html_document
+---
+
+read one fasta file
+
+```{r}
+library(seqinr)
+library(muscle)
+library(ape)
+
+consensusfasta<-read.dna("../Data/HIV1_CON_2004_POL_DNA.fasta", format = "fasta",as.character=TRUE)	
+	#where is the start of POL? 
+polstart=regexpr("cctca",paste(consensusfasta[which(row.names(consensusfasta)=="CONSENSUS_B"),],collapse=""))[1]
+RTstart=polstart+297
+consensusB<-consensusfasta[which(row.names(consensusfasta)=="CONSENSUS_B"), (RTstart+167):(RTstart+690)]
+write.fasta(consensusB, names = "consensusB", file.out="consensusB.fasta")
+consensusBStringSet<-readDNAStringSet("consensusB.fasta", format = "fasta")
+```
+
+```{r}
+
+#get first fastafile
+ListFiles<-list.files("../Data/SRA_PrepFiles/SRP049715/fastafiles")
+j=1
+filename=ListFiles[j]
+X<-readDNAStringSet(paste("../Data/SRA_PrepFiles/SRP049715/fastafiles/",filename,sep=""), format = "fasta")
+
+#get first sequence
+s<-seq(1,length(X),by=100)
+
+#for (i in 1:length(X)){
+for (i in 1:300){
+if (i %in% s) print(i)    
+OneSeq<-X[i]
+#add consensus
+OneSeq<-append(OneSeq, consensusBStringSet, after=0)
+#align
+aln <- muscle::muscle(OneSeq, diags = TRUE, quiet=TRUE)
+if (i ==1) Seq = as(aln, "DNAStringSet")[2]
+if (i!= 1) Seq = append(Seq, as(aln, "DNAStringSet")[2], after=length(Seq))
+}
+
+writeXStringSet(Seq, file=paste("../Data/SRA_PrepFiles/SRP049715/alignedfastafiles/",filename,sep=""))
+
+#I looked at the alignment in http://www.ebi.ac.uk/goldman-srv/webprank/ and found plenty of mistakes. 
+
+```
+
+```{r}
+
+#Problem, the sequences don't start at the beginning of a codon. 
+#Should I just take off one letter? 
+
+PathClustal<-"/Users/pleuni/Desktop/clustalw2"
+filename=ListFiles[j]
+infile=paste("../Data/SRA_PrepFiles/SRP049715/fastafiles/",filename,sep="")
+read.fasta(infile, as.string=TRUE)->x
+substr(x,2,1000)->x
+as.list(x)->y
+write.fasta(y,names = 1:length(y),file.out="y.fasta")
+
+system.time(reverse.align("y.fasta", input.format = 'fasta', out.file = paste("aligned",filename, sep=""),
+output.format = 'fasta', align.prot = TRUE, numcode = 1,
+clustal.path = PathClustal, forceDNAtolower = TRUE, forceAAtolower = FALSE))
+
+```
+
+
+
+reverse.align(nucl.file, protaln.file, input.format = 'fasta', out.file,
+output.format = 'fasta', align.prot = FALSE, numcode = 1,
+clustal.path = NULL, forceDNAtolower = TRUE, forceAAtolower = FALSE)
+
+
+```{r}
+read.fasta(file=paste("../Data/SRA_PrepFiles/SRP049715/alignedfastafiles/",filename,sep=""))->F
+read.dna(file=paste("../Data/SRA_PrepFiles/SRP049715/alignedfastafiles/",filename,sep=""), format="fasta")->F
+
+
+```
+
+
+```{r}
+for (j in 1:length(ListFiles)){
+filename=ListFiles[j]
+X<-readDNAStringSet(paste("../Data/SRA_PrepFiles/SRP049715/fastafiles/",filename,sep=""), format = "fasta")
+print(length(X))
+}
+
+```
+
+
+```{r}
+
+X_wC<-append(X, consensusBStringSet, after=0)
+
+aln <- muscle(X_wC, diags = TRUE, quiet=TRUE, maxiters=1)
+
+writeXStringSet(as(aln, "DNAStringSet"), file="../Data/SRA_PrepFiles/SRP049715/alignedfastafiles/TRY.fasta")
+
+
+```
+
