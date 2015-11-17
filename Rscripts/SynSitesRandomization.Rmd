@@ -28,6 +28,8 @@ var(OverviewDFSyn$colMeansTs)
 ```
 
 
+
+### Synonymous positions
 OK, now I am going to do the randomization and recalculate the variance 1000 times. Only for the syn sites
 ```{r}
 freqPatTsSyn<-freqPatTs[,OverviewDF$TypeOfSite=="syn"]
@@ -79,4 +81,52 @@ legend("topright", c('Randomized','Observed'), lwd=4, col=c(rgb(0,0,1,0.5), rgb(
 ```
 
 
+### Non-Synonymous positions
+```{r}
+freqPatTsNonSyn<-freqPatTs[,OverviewDF$TypeOfSite=="nonsyn"]
+consensusBNonSyn<-consensusB[OverviewDF$TypeOfSite=="nonsyn"]
+AsitesNonSyn<-which(consensusBNonSyn=="a")
+CsitesNonSyn<-which(consensusBNonSyn=="c")
+GsitesNonSyn<-which(consensusBNonSyn=="g")
+TsitesNonSyn<-which(consensusBNonSyn=="t")
+
+ListOfVarsNonSyn<-c()
+#switch A sites
+
+for (j in 1:1000){
+freqPatTsRandomNonSyn<-freqPatTsNonSyn
+
+for (i in 1:length(freqPatTs[,1])){
+freqPatTsRandomNonSyn[i,sample(AsitesNonSyn)]<-freqPatTsNonSyn[i,AsitesNonSyn]
+freqPatTsRandomNonSyn[i,sample(CsitesNonSyn)]<-freqPatTsNonSyn[i,CsitesNonSyn]
+freqPatTsRandomNonSyn[i,sample(GsitesNonSyn)]<-freqPatTsNonSyn[i,GsitesNonSyn]
+freqPatTsRandomNonSyn[i,sample(TsitesNonSyn)]<-freqPatTsNonSyn[i,TsitesNonSyn]
+}
+
+ListOfVarsNonSyn<-c(ListOfVarsNonSyn, var(apply(freqPatTsRandomNonSyn, 2 , mean, na.rm=TRUE)))
+}
+```
+
+
+
+
+Show the distribution of variances form the randomized data and compare with the value of the ofiginal dataset. It looks very different!
+```{r}
+## settings for version 2
+#hist(ListOfVars,breaks=20,xlim=c(8*10^-6,2*10^-5), main="Histogram of variances vs observed variance")
+## new settings with version 2 adapted with a threshold
+min(ListOfVarsNonSyn);max(ListOfVarsNonSyn)
+hist(ListOfVarsNonSyn,breaks=20,xlim=c(1*10^-6,10*10^-5), main="Histogram of variances vs observed variance")
+abline(v=var(apply(freqPatTsNonSyn, 2 , mean, na.rm=TRUE)),col=2,lwd=2)
+```
+Show the distribution of the means for one randome dataset and the original data. One can see that the randomized data have much fewer 0s and fewer high values. 
+```{r}
+colMeansRandomNonSyn<-apply(freqPatTsRandomNonSyn, 2 , mean, na.rm=TRUE)
+par(mfrow=c(1,1))
+hist(apply(freqPatTsNonSyn, 2 , mean, na.rm=TRUE),breaks=seq(0,0.2,by=0.001),xlim=c(0,0.04),
+     #ylim=c(0,40),
+     col=rgb(1,0,0,0.5),main="Histogram of mean frequencies")
+hist(colMeansRandomNonSyn,breaks=seq(0,0.1,by=0.001),xlim=c(0,0.04),ylim=c(0,40),add=T,col=rgb(0,0,1,0.5))
+legend("topright", c('Randomized','Observed'), lwd=4, col=c(rgb(0,0,1,0.5), rgb(1,0,0,0.5)))
+```
 
