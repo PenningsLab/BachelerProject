@@ -48,8 +48,8 @@ transition<-function(nuc){
 }
 
 typeofsitefunction<-function(WTcodon, mutantcodon){
-    WTAA<-translate(WTcodon)
-    MUTAA<-translate(mutantcodon)
+    WTAA<-seqinr::translate(WTcodon)
+    MUTAA<-seqinr::translate(mutantcodon)
     if (WTAA == MUTAA) return ("syn")
     else if (MUTAA == "*") return ("stop")
     else return ("nonsyn")
