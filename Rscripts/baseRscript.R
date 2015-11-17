@@ -56,6 +56,20 @@ typeofsitefunction<-function(WTcodon, mutantcodon){
 }
 
 
+TypeOfSite<-c()
+for (codon in 1:(984/3)){#for each codon in the sequence
+    positions <- c(codon*3-2,codon*3-1, codon*3)
+    WTcodon <- consensusB[positions]
+    mutant1codon <- c(transition(WTcodon[1]), WTcodon[2:3])
+    mutant2codon <- c(WTcodon[1],transition(WTcodon[2]), WTcodon[3])
+    mutant3codon <- c(WTcodon[1:2], transition(WTcodon[3]))
+    TypeOfSite<-c(TypeOfSite,typeofsitefunction(WTcodon,mutant1codon))
+    TypeOfSite<-c(TypeOfSite,typeofsitefunction(WTcodon,mutant2codon))
+    TypeOfSite<-c(TypeOfSite,typeofsitefunction(WTcodon,mutant3codon))
+}
+#make sure that resistance sites in RT have a diff type of site
+TypeOfSite[sort(c((RTImuts$pos*3)-2,(RTImuts$pos*3)-1,(RTImuts$pos*3)))+297]<-"res"
+      
 
 
 
