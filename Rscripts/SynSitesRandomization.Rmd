@@ -181,8 +181,6 @@ axis(1, at=seq(296,1000,by=30), labels=seq(0,234,by=10),cex.axis=.5,tck=0,line=-
 
 
 
-
-
 =======
 par(mfrow=c(1,1))
 hist(apply(freqPatTsNonSyn, 2 , mean, na.rm=TRUE),breaks=seq(0,0.2,by=0.001),xlim=c(0,0.04),
