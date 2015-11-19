@@ -174,28 +174,6 @@ i=370
 ```
 
 
-## RT 
-RTdataNonSyn<-RTdata[RTdata$TypeOfSite=="nonsyn",]
-plot(RTdataNonSyn$num[order(RTdataNonSyn$num)],RTdataNonSyn$colMeansTs[order(RTdataNonSyn$num)]+0.001,col=RTdataNonSyn$color[order(RTdataNonSyn$num)],pch=16,log="y",type="b")
-
-#Add moving mean
-for (i in 370:900){
-    range = (i-20):(i+20)
-    points(i, mean(RTdataNonSyn$colMeansTs[RTdataNonSyn$num%in%range]), col="blue",pch = 12, cex=3)
-    points(i, median(RTdataNonSyn$colMeansTs[RTdataNonSyn$num%in%range]), col="green",pch = 11, cex=3)
-}
-
-i=370
-    range = (i-20):(i+20)
-
-    
-    
-    
-    
-    
-```    
-
-
 
 
 

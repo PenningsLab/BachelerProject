@@ -7,6 +7,7 @@ output: html_document
 
 
 ```{r}
+
 source('./baseRscript.R')
 ```
 
@@ -25,7 +26,29 @@ OverviewDFSyn<-OverviewDF[OverviewDF$TypeOfSite=="syn",]
 
 hist(OverviewDFSyn$colMeansTs,breaks=50)
 var(OverviewDFSyn$colMeansTs)
+
+#removing the % highest proportion from the calculations
+#tail(OverviewDFSyn[order(OverviewDFSyn$colMeansTs),],n=-5L)
+perc<-0.10
+npatout<-ceiling(nrow(OverviewDFSyn)*perc)
+OverviewDFSynOrdered<-OverviewDFSyn[order(OverviewDFSyn$colMeansTs),]
+OverviewDFSynTail<-OverviewDFSynOrdered[1:(nrow(OverviewDFSynOrdered)-npatout),]
+#OverviewDFSynTail<-tail(OverviewDFSyn[order(OverviewDFSyn$colMeansTs),],n=-ceiling(nrow(OverviewDFSyn)*perc))
+
 ```
+
+* freqPatTs: data frame of patients (rows) and positions (columns)
+
+* colMeansTs: col means of freqPatTs
+
+* OverviewDF: combination of colmeansts and type of site
+
++ OverviewDFSyn: all syn positions 
+
++ OverviewDFSynTail: all syn positions without the x percent highest frequency values 
+
+
+
 
 
 #OK, now I am going to do the randomization and recalculate the variance 1000 times. Only for the syn sites
@@ -33,19 +56,25 @@ var(OverviewDFSyn$colMeansTs)
 
 ### Synonymous positions
 OK, now I am going to do the randomization and recalculate the variance 1000 times. Only for the syn sites
->>>>>>> origin/master
 ```{r}
+
+#tail version: remove the 5% upper highest syn positions (=outliers)
+freqPatTsSyn<-freqPatTs[,OverviewDFSynTail$num]
+consensusBSyn<-consensusB[OverviewDFSynTail$num]
+
+#original version: no restrictions on outliers
 freqPatTsSyn<-freqPatTs[,OverviewDF$TypeOfSite=="syn"]
 consensusBSyn<-consensusB[OverviewDF$TypeOfSite=="syn"]
+
+#
 Asites<-which(consensusBSyn=="a")
 Csites<-which(consensusBSyn=="c")
 Gsites<-which(consensusBSyn=="g")
 Tsites<-which(consensusBSyn=="t")
 
 ListOfVars<-c()
-#switch A sites
 
-for (j in 1:100){
+for (j in 1:500){
   #  if (j%%10 == 0) print(j)
 freqPatTsRandomSyn<-freqPatTsSyn
 
@@ -56,7 +85,7 @@ freqPatTsRandomSyn[patrow,sample(Gsites)]<-freqPatTsSyn[patrow,Gsites]
 freqPatTsRandomSyn[patrow,sample(Tsites)]<-freqPatTsSyn[patrow,Tsites]
 }
 
-ListOfVars<-c(ListOfVars, var(apply(freqPatTsRandomSyn, 2 , mean, na.rm=TRUE)))
+ListOfVars<-c(ListOfVars, var(apply(freqPatTsRandomSyn, 2 , mean, na.rm=TRUE))) #vector with n=runs means 
 }
 ```
 
@@ -69,27 +98,40 @@ Show the distribution of variances form the randomized data and compare with the
 #hist(ListOfVars,breaks=20,xlim=c(8*10^-6,2*10^-5), main="Histogram of variances vs observed variance")
 ## new settings with version 2 adapted with a threshold
 min(ListOfVars);max(ListOfVars)
-hist(ListOfVars,breaks=20,xlim=c(.9*10^-5,10*10^-5), main="Histogram of variances vs observed variance")
-abline(v=var(apply(freqPatTsSyn, 2 , mean, na.rm=TRUE)),col=2,lwd=2)
 
+pdf("../Output/Distribution_of_Variances_top5percentout.pdf",width = 13, height = 10)
+hist(ListOfVars,breaks=20,xlim=c(.9*10^-5,10*10^-5), main="Histogram of variances vs observed variance (5%)")
+abline(v=var(apply(freqPatTsSyn, 2 , mean, na.rm=TRUE)),col=2,lwd=2)
+dev.off()
 ```
+
+
+
 Show the distribution of the means for one randome dataset and the original data. One can see that the randomized data have much fewer 0s and fewer high values. 
 ```{r}
 colMeansRandomSyn<-apply(freqPatTsRandomSyn, 2 , mean, na.rm=TRUE)
 colMeansSyn<-apply(freqPatTsSyn, 2 , mean, na.rm=TRUE)
+pdf("../Output/Distribution_of_Means_top10percentout.pdf",width = 13, height = 10)
 par(mfrow=c(1,1))
-hist(apply(freqPatTsSyn, 2 , mean, na.rm=TRUE),breaks=seq(0,0.2,by=0.001),xlim=c(0,0.04),
+hist(colMeansSyn,breaks=seq(0,0.2,by=0.001),xlim=c(0,0.04),
      ylim=c(0,40),
-     col=rgb(1,0,0,0.5),main="Histogram of mean frequencies")
+     col=rgb(1,0,0,0.5),main="Histogram of mean frequencies 10%")
 hist(colMeansRandomSyn,breaks=seq(0,0.1,by=0.001),xlim=c(0,0.04),ylim=c(0,40),add=T,col=rgb(0,0,1,0.5))
 legend("topright", c('Randomized','Observed'), lwd=4, col=c(rgb(0,0,1,0.5), rgb(1,0,0,0.5)))
+dev.off()
 ```
 
 
 #Do the same analysis for the non synonymous sites
 ```{r}
+#tail version: remove the x% upper highest syn positions (=outliers)
+freqPatTsSyn<-freqPatTs[,OverviewDFSynTail$num]
+consensusBSyn<-consensusB[OverviewDFSynTail$num]
+
+# original version 
 freqPatTsNonSyn<-freqPatTs[,OverviewDF$TypeOfSite=="nonsyn"]
 consensusBNonSyn<-consensusB[OverviewDF$TypeOfSite=="nonsyn"]
+#
 AsitesNonSyn<-which(consensusBNonSyn=="a")
 CsitesNonSyn<-which(consensusBNonSyn=="c")
 GsitesNonSyn<-which(consensusBNonSyn=="g")
@@ -137,6 +179,8 @@ hist(colMeansRandomNonSyn,breaks=seq(0,0.1,by=0.001),xlim=c(0,0.04),ylim=c(0,40)
 legend("topright", c('Randomized','Observed'), lwd=4, col=c(rgb(0,0,1,0.5), rgb(1,0,0,0.5)))
 
 ```
+
+
 
 Just to be sure, I want to check that the non-syn sites have lower frequencies than the syn sites and also the stop sites have lower frequencies than the non-syn sites. 
 Not entirely sure what is the best way to do this. 
