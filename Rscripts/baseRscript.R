@@ -36,6 +36,8 @@ if (TRUE){
 	polstart=regexpr("cctca",paste(consensusfasta[which(row.names(consensusfasta)=="CONSENSUS_B"),],collapse=""))[1]
 	consensusB<-consensusfasta[which(row.names(consensusfasta)=="CONSENSUS_B"), polstart:(polstart+983)]
 	consofcons<-consensusfasta[which(row.names(consensusfasta)=="CON_OF_CONS"), polstart:(polstart+983)]
+	list.files(path="../Data/BachelerFiles/FASTAfiles/")->listfastafiles
+	
 }
 
 
