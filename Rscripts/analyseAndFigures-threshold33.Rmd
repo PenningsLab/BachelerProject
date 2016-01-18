@@ -4,8 +4,6 @@
 * Perform necessary calcuations
 *Plot results (eventually new script)
 
-
-
 Make sure to set your working directory to the correct folder
 Kristof: setwd('/Users/hopla/project-master/project/gitpleuni/bachelerProject/Rscripts')
 
@@ -44,15 +42,10 @@ upperConf<-btmeansSorted[,floor((1-0.025)*numbootstraps)]
 }
 ```
 
-
-
 ## Method 2: original update by  Pleuni 
 Only synonymous, non-synomous and stop codons are considered
 - for each mutation, determine whether it is synonymous, non-synonymous or creates a stop
 - add information on resistance  positions
-
-
-
 
 ```{r}
 #PSP Nov 11 2015 I removed lowerConf and upperConf here because we no longer calculate them
@@ -62,7 +55,7 @@ OverviewDF<-data.frame(num=1:984,colMeansTs,TypeOfSite)
 OverviewDFOrderedByFreq <- OverviewDF[order(colMeansTs),] 
 OverviewDFOrderedByFreq$color<-""
 for (i in 1:984){
-    if (OverviewDFOrderedByFreq$TypeOfSite[i]=="syn") OverviewDFOrderedByFreq$color[i] = "green"
+    if (OverviewDFOrderedByFreq$TypeOfSite[i]=="syn") OverviewDFOrderedByFreq$color[i] = "darkolivegreen3"
     if (OverviewDFOrderedByFreq$TypeOfSite[i]=="nonsyn") OverviewDFOrderedByFreq$color[i] = "red"
     if (OverviewDFOrderedByFreq$TypeOfSite[i]=="stop") OverviewDFOrderedByFreq$color[i] = "black"
     if (OverviewDFOrderedByFreq$TypeOfSite[i]=="res") OverviewDFOrderedByFreq$color[i] = "purple"
@@ -82,13 +75,13 @@ freqPatTs<-round(freqPatTs,2)
 *PRO: Make the plots (transitions)*
 
 ```{r}
+
 pdf("../Output/Protease.pdf",width = 13, height = 10)
 PROdata<-OverviewDFOrderedByFreq[OverviewDFOrderedByFreq$num<298,]
 #remove resistance mutations
 PROdata<-PROdata[PROdata$TypeOfSite!="res",]
-plot(PROdata$colMeansTs+0.001,log="y",ylim=c(0.001,0.15),cex=2, pch = "|",col=PROdata$color)
-#arrows(1:length(PROdata$num), PROdata$lowerConf +0.001, 1:length(PROdata$num), PROdata$upperConf +0.001, 
-#       angle=90, length=0.01, code=3, col=PROdata$color,lwd=0.1)
+plot(PROdata$colMeansTs+0.001,log="y",ylim=c(0.001,0.15),cex=1.5, pch = 16,col=alpha(PROdata$color, 1), xlab = "Nucleotides ordered by mean mutation frequency", ylab = "Mean mutation frequency" , yaxt = "n")
+axis(2,labels = c(0,0.001, 0.005, 0.05, 0.1), at = c(0.001, 0.002, 0.006, 0.051, 0.101))
 dev.off()
 ```
 
@@ -105,18 +98,16 @@ dev.off()
 
 ```
 
-
-
 ### Make an AA variability map 
 
 ```{r}
-translatedB<-translate(consensusB)
+translatedB<-seqinr::translate(consensusB)
 #convert the fasta files into AA sequences
 translatedfasta<-c()
 for (i in 1:length(listfastafiles)){ #for each fastafile 
          filename=paste("../Data/BachelerFiles/FASTAfiles/",substr(listfastafiles[i],1,6),".fasta",sep="")
 	       patfasta<-read.dna(filename, format = "fasta",as.character=TRUE) #read the file       
-	       translatedfasta<-rbind(translatedfasta,t(apply(patfasta,1,function(x) translate(x))))
+	       translatedfasta<-rbind(translatedfasta,t(apply(patfasta,1,function(x) seqinr::translate(x))))
 }
 ```
 
@@ -155,7 +146,7 @@ plot(PROdataNonSyn$num[order(PROdataNonSyn$num)],PROdataNonSyn$colMeansTs[order(
 for (i in 20:280){
     range = (i-20):(i+20)
 #    points(i, mean(PROdataNonSyn$colMeansTs[PROdataNonSyn$num%in%range]), col="blue",pch = 12, cex=3)
-    points(i, median(PROdataNonSyn$colMeansTs[PROdataNonSyn$num%in%range]), col="green",pch = 11, cex=3)
+    points(i, median(PROdataNonSyn$colMeansTs[PROdataNonSyn$num%in%range]), col="green",pch = 11, cex=2)
 }
 dev.off()
 
@@ -174,6 +165,68 @@ i=370
 ```
 
 
+## Syn plot 
+
+```{r}
+pdf("../Output/PR-syn.pdf",width = 13, height = 10)
+PROdataSyn<-PROdata[PROdata$TypeOfSite=="syn",]
+#Make plot of Protease 
+plot(PROdataSyn$num[order(PROdataSyn$num)],PROdataSyn$colMeansTs[order(PROdataSyn$num)]+0.001,col=PROdataSyn$color[order(PROdataSyn$num)],pch=16,
+     log="y",
+     type="b")#,ylim=c(0,max(PROdataNonSyn$colMeansTs)))
+
+#Add moving mean
+for (i in 20:280){
+    range = (i-10):(i+10)
+    points(i, median(PROdataSyn$colMeansTs[PROdataSyn$num%in%range]), col="blue",pch = 11, cex=2)
+}
+dev.off()
+```
+
+```{r}
+RTdataNonSyn<-RTdata[RTdata$TypeOfSite=="nonsyn",]
+plot(RTdataNonSyn$num[order(RTdataNonSyn$num)],RTdataNonSyn$colMeansTs[order(RTdataNonSyn$num)]+0.001,col=RTdataNonSyn$color[order(RTdataNonSyn$num)],pch=16,log="y",type="b")
+
+#Add moving mean
+for (i in 370:900){
+    range = (i-20):(i+20)
+   # points(i, mean(RTdataNonSyn$colMeansTs[RTdataNonSyn$num%in%range]), col="blue",pch = 12, cex=3)
+    points(i, median(RTdataNonSyn$colMeansTs[RTdataNonSyn$num%in%range]), col="green",pch = 11, cex=3)
+}
+
+i=370
+    range = (i-20):(i+20)
+```
+
+```{r}
+pdf("../Output/RT-syn.pdf",width = 13, height = 10)
+RTdataSyn<-RTdata[RTdata$TypeOfSite=="syn",]
+#Make plot of RTtease 
+plot(RTdataSyn$num[order(RTdataSyn$num)],RTdataSyn$colMeansTs[order(RTdataSyn$num)]+0.001,col=RTdataSyn$color[order(RTdataSyn$num)],pch=16,
+     log="y",
+     type="b", 
+    ylim = c(0.001,0.06)    )#,ylim=c(0,max(RTdataNonSyn$colMeansTs)))
+#Add moving mean
+for (i in 370:900){
+    range = (i-10):(i+10)
+    points(i, median(RTdataSyn$colMeansTs[RTdataSyn$num%in%range])+0.001, col="blue",pch = 11, cex=2)
+}
+dev.off()
+```
+
+```{r}
+AlldataSyn<-rbind(PROdata[PROdata$TypeOfSite=="syn",],RTdata[RTdata$TypeOfSite=="syn",])
+plot(AlldataSyn$num[order(AlldataSyn$num)],AlldataSyn$colMeansTs[order(AlldataSyn$num)]+0.001,col=AlldataSyn$color[order(AlldataSyn$num)],pch=16,
+     log="y",
+     type="b", 
+    ylim = c(0.001,0.06)    )#,ylim=c(0,max(RTdataNonSyn$colMeansTs)))
+#Add line for AA 82-107 from Mayrose paper
+lines(c(82*3,107*3),c(0.002,0.002),col=2,lwd=2)
+lines(c(7*3,31*3),c(0.002,0.002),col=2,lwd=2)
+
+
+```
+
 ## RT 
 RTdataNonSyn<-RTdata[RTdata$TypeOfSite=="nonsyn",]
 plot(RTdataNonSyn$num[order(RTdataNonSyn$num)],RTdataNonSyn$colMeansTs[order(RTdataNonSyn$num)]+0.001,col=RTdataNonSyn$color[order(RTdataNonSyn$num)],pch=16,log="y",type="b")
@@ -187,11 +240,6 @@ for (i in 370:900){
 
 i=370
     range = (i-20):(i+20)
-
-    
-    
-    
-    
     
 ```    
 
@@ -200,7 +248,6 @@ i=370
 
 
 # Next steps 
-
 Going to randomisations
 - frequency-ordered figure: does the coloring scheme hold?
   
@@ -209,7 +256,6 @@ Going to randomisations
 ###For protease, which are the most deleterious non-syn sites? 
 To be done 
 Interesting? why? for therapy or vaccine. 
-
 
 ###For protease, which are the most neutral non-syn sites? 
 corresponding to the expected frequency based on sequence length * mutation rate? Frequency should flucatuate aroudn the expected value? 
