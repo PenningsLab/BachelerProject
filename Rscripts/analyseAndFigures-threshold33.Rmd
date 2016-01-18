@@ -227,7 +227,7 @@ lines(c(7*3,31*3),c(0.002,0.002),col=2,lwd=2)
 
 ```
 
-## RT 
+## RT
 RTdataNonSyn<-RTdata[RTdata$TypeOfSite=="nonsyn",]
 plot(RTdataNonSyn$num[order(RTdataNonSyn$num)],RTdataNonSyn$colMeansTs[order(RTdataNonSyn$num)]+0.001,col=RTdataNonSyn$color[order(RTdataNonSyn$num)],pch=16,log="y",type="b")
 
@@ -242,8 +242,6 @@ i=370
     range = (i-20):(i+20)
     
 ```    
-
-
 
 
 

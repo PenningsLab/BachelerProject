@@ -95,7 +95,7 @@ filename=paste("../Data/BachelerFiles/FASTAfiles/",substr(listfastafiles[i],1,6)
 #remove Patients without data 
 for (pat in ListPatientsWithoutData){
   freqPatSite<-freqPatSite[-which(row.names(freqPatSite)==pat),]
-  freqPatTs<-freqPatTs[-which(row.names(freqPatTs)==pat),]
+  freqPatTs_threshold<-freqPatTs_threshold[-which(row.names(freqPatTs)==pat),]
 }
 write.csv(freqPatTs_threshold,file="../Output/freqPatTsInclDay0-threshold.csv")
 }	  
