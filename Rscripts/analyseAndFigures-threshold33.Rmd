@@ -75,12 +75,12 @@ freqPatTs<-round(freqPatTs,2)
 *PRO: Make the plots (transitions)*
 
 ```{r}
-
+wlibrary(scales)
 pdf("../Output/Protease.pdf",width = 13, height = 10)
 PROdata<-OverviewDFOrderedByFreq[OverviewDFOrderedByFreq$num<298,]
 #remove resistance mutations
 PROdata<-PROdata[PROdata$TypeOfSite!="res",]
-plot(PROdata$colMeansTs+0.001,log="y",ylim=c(0.001,0.15),cex=1.5, pch = 16,col=alpha(PROdata$color, 1), xlab = "Nucleotides ordered by mean mutation frequency", ylab = "Mean mutation frequency" , yaxt = "n")
+plot(PROdata$colMeansTs+0.001,log="y",ylim=c(0.001,0.15),cex=1.5, pch = 16, col=alpha(PROdata$color, 1), xlab = "Nucleotides ordered by mean mutation frequency", ylab = "Mean mutation frequency" , yaxt = "n")
 axis(2,labels = c(0,0.001, 0.005, 0.05, 0.1), at = c(0.001, 0.002, 0.006, 0.051, 0.101))
 dev.off()
 ```
