@@ -1,4 +1,6 @@
 #This R script compares expected with real Freq Dist. I am not sure how useful it still is (PP 2016 Feb).
+#Maybe it is useful to get the data from only the random subcohort.
+#MeanFreqData has also data from the patients who were picked because they failed treatment.
 
 #to estimate the number of particles that were measured, I assume that the estimated frequencies are the result of binomial sampling.
 #if the data are x=c(0.02,0.03) for a given patient (2% and 3%), then the estimated number of particles is 
@@ -11,7 +13,7 @@
 ###########################
 #Get list of PIDs of inds from the random subcohort
 ###########################
-read.table("../RScriptsToLookAtData/DataJonLi.csv",sep="\t",header=TRUE)->realdata
+read.table("DataJonLi.csv",sep="\t",header=TRUE)->realdata
 read.csv("MeanFreqData.csv",sep=",",header=TRUE)->Mutdata
 
 dataPare<-realdata[realdata$Study==8,]
@@ -34,6 +36,8 @@ ListRanPID<-as.character(dataPareRan[,2])
 	Mutdata<-Mutdata[indstokeep,]
 
 #add predicted distribution
+
+write.csv(Mutdata,file="MeanFreqDataRanSubCohort.csv")
 
 Ne=15000; mu=2*10^-6;
 
